@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Galaxy Animation</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="galaxyCanvas"></canvas>
+
+<script>
+  const canvas = document.getElementById('galaxyCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let stars = [];
+  const numStars = 800;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < numStars; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        z: Math.random() * canvas.width,
+        o: Math.random() * 0.5 + 0.5 // opacity
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+
+    for (let i = 0; i < numStars; i++) {
+      let star = stars[i];
+      let k = 128.0 / star.z;
+      let x = (star.x - canvas.width / 2) * k + canvas.width / 2;
+      let y = (star.y - canvas.height / 2) * k + canvas.height / 2;
+      let size = (1 - star.z / canvas.width) * 2;
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(255, 255, 255, ${star.o})`;
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function moveStars() {
+    for (let i = 0; i < numStars; i++) {
+      stars[i].z -= 1;
+      if (stars[i].z <= 0) {
+        stars[i].z = canvas.width;
+      }
+    }
+  }
+
+  function animate() {
+    moveStars();
+    drawStars();
+    requestAnimationFrame(animate);
+  }
+
+  createStars();
+  animate();
+</script>
+
+</body>
+</html>
